@@ -1,6 +1,10 @@
 // Sample NestJS Service using ConfigService
 class DatabaseService {
-  constructor(private readonly configService: any) {}
+  configService: any;
+
+  constructor(configService: any) {
+    this.configService = configService;
+  }
 
   getDbConfig() {
     const dbUrl = this.configService.get<string>('NEST_DATABASE_URL');

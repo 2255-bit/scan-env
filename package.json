@@ -31,8 +31,8 @@
   },
   "scripts": {
     "start": "node ./bin/scan-env.js",
-    "test": "node --test test/**/*.test.js",
-    "lint": "node --check bin/scan-env.js src/*.js test/**/*.js"
+    "test": "node --test test/*.test.js",
+    "lint": "node --check bin/scan-env.js src/*.js test/*.test.js"
   },
   "repository": {
     "type": "git",
