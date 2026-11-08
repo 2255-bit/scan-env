@@ -4,7 +4,7 @@
 
 ### Zero-dependency CLI to audit and sync environment variables between your codebase and `.env.example`.
 
-[![CI](https://github.com/scan-env/scan-env/actions/workflows/ci.yml/badge.svg)](https://github.com/scan-env/scan-env/actions)
+[![CI](https://github.com/2255-bit/scan-env/actions/workflows/ci.yml/badge.svg)](https://github.com/2255-bit/scan-env/actions)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://www.npmjs.com/package/scan-env)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-blue.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
