@@ -97,6 +97,38 @@ const b = 2;`;
     assert.ok(astroVars.includes('DATABASE_SECRET'));
   });
 
+  it('extracts Bun and Deno env variables', () => {
+    const content = fs.readFileSync(
+      path.resolve('test/fixtures/sample-bun-deno.ts'),
+      'utf8'
+    );
+    const names = extractEnvVars(content, 'sample-bun-deno.ts').map((r) => r.name);
+
+    // Bun
+    assert.ok(names.includes('BUN_SECRET_KEY'));
+    assert.ok(names.includes('BUN_DATABASE_URL'));
+    assert.ok(names.includes('BUN_PORT'));
+    assert.ok(names.includes('BUN_HOST'));
+
+    // Deno
+    assert.ok(names.includes('DENO_APP_PORT'));
+    assert.ok(names.includes('DENO_API_KEY'));
+    assert.ok(names.includes('DENO_OPTIONAL_TOKEN'));
+  });
+
+  it('extracts NestJS ConfigService and config.get calls', () => {
+    const content = fs.readFileSync(
+      path.resolve('test/fixtures/sample-nestjs.ts'),
+      'utf8'
+    );
+    const names = extractEnvVars(content, 'sample-nestjs.ts').map((r) => r.name);
+
+    assert.ok(names.includes('NEST_DATABASE_URL'));
+    assert.ok(names.includes('NEST_PORT'));
+    assert.ok(names.includes('NEST_JWT_SECRET'));
+    assert.ok(names.includes('NEST_REDIS_HOST'));
+  });
+
   it('scans fixtures directory properly', () => {
     const res = scanProject({
       dir: path.resolve('test/fixtures'),

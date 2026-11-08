@@ -82,8 +82,9 @@ export function extractEnvVars(code, filePath = '') {
   // - process.env['VAR_NAME'] or process.env?.["VAR_NAME"]
   // - import.meta.env.VAR_NAME or import.meta.env?.VAR_NAME
   // - import.meta.env['VAR_NAME'] or import.meta.env?.["VAR_NAME"]
+  // - Bun.env.VAR_NAME or Bun.env['VAR_NAME']
   const dotBracketRegex =
-    /(?:process\.env|import\.meta\.env)(?:\?\.)?(?:\.([a-zA-Z_][a-zA-Z0-9_]*)|\[\s*['"`]([a-zA-Z_][a-zA-Z0-9_]*)['"`]\s*\])/g;
+    /(?:process\.env|import\.meta\.env|Bun\.env)(?:\?\.)?(?:\.([a-zA-Z_][a-zA-Z0-9_]*)|\[\s*['"`]([a-zA-Z_][a-zA-Z0-9_]*)['"`]\s*\])/g;
 
   let match;
   while ((match = dotBracketRegex.exec(cleanCode)) !== null) {
@@ -94,9 +95,10 @@ export function extractEnvVars(code, filePath = '') {
   // 2. Destructuring assignment:
   // e.g. const { FOO, BAR: renamed, BAZ = 'default' } = process.env;
   // or const { FOO } = import.meta.env;
+  // or const { FOO } = Bun.env;
   // [^{}]+ ensures we do not match through an outer function or object brace.
   const destructuringRegex =
-    /(?:(?:const|let|var)\s+|\(\s*)?\{([^{}]+)\}\s*=\s*(?:process\.env|import\.meta\.env)/g;
+    /(?:(?:const|let|var)\s+|\(\s*)?\{([^{}]+)\}\s*=\s*(?:process\.env|import\.meta\.env|Bun\.env)/g;
 
   while ((match = destructuringRegex.exec(cleanCode)) !== null) {
     const patternGroup = match[1];
@@ -120,6 +122,31 @@ export function extractEnvVars(code, filePath = '') {
       }
       currentOffset += rawItem.length + 1; // +1 for the comma
     }
+  }
+
+  // 3. Deno environment access:
+  // - Deno.env.get("VAR_NAME")
+  // - Deno.env.has("VAR_NAME")
+  // - Deno?.env?.get('VAR_NAME')
+  const denoRegex =
+    /Deno(?:\?\.|\.)env(?:\?\.|\.)(?:get|has)\s*\(\s*['"`]([a-zA-Z_][a-zA-Z0-9_]*)['"`]\s*\)/g;
+
+  while ((match = denoRegex.exec(cleanCode)) !== null) {
+    const varName = match[1];
+    record(varName, match.index);
+  }
+
+  // 4. NestJS / ConfigService / config.get access:
+  // - configService.get('VAR_NAME')
+  // - this.configService.get<string>('VAR_NAME')
+  // - this.configService.getOrThrow<number>('VAR_NAME')
+  // - config.get('VAR_NAME')
+  const configServiceRegex =
+    /(?:\bthis\.configService|\bconfigService|\bconfig)(?:\?\.|\.)(?:get|getOrThrow)(?:<[^>]+>)?\s*\(\s*['"`]([a-zA-Z_][a-zA-Z0-9_]*)['"`]/g;
+
+  while ((match = configServiceRegex.exec(cleanCode)) !== null) {
+    const varName = match[1];
+    record(varName, match.index);
   }
 
   return results;

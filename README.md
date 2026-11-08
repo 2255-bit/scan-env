@@ -25,6 +25,7 @@ Existing linters are either bloated with hundreds of dependencies, tied to a spe
 
 - ⚡ **Instant startup:** Runs in `< 40ms` with zero dependency overhead.
 - 🔍 **Universal detection:** Scans `.js`, `.ts`, `.jsx`, `.tsx`, `.vue`, `.svelte`, and `.astro`.
+- 🌐 **Multi-runtime & Framework support:** Node.js, Bun, Deno, Next.js, Vite, Nuxt, Astro, SvelteKit, and NestJS `ConfigService`.
 - 🛡️ **Zero false positives:** Accurately ignores single-line (`//`), multi-line (`/* */`), and HTML comments.
 - 📍 **Exact location tracking:** Pinpoints exact file paths and line numbers where undeclared variables are used.
 - 🛠️ **One-click auto-fix:** Pass `--fix` to immediately append missing variables to `.env.example` without touching existing content.
@@ -62,22 +63,31 @@ yarn add -D scan-env
 
 ## What It Detects
 
-`scan-env` recognizes all common conventions across both Node.js and modern client-side bundlers (Vite, Next.js, Nuxt, Astro, SvelteKit):
+`scan-env` recognizes all common conventions across Node.js, Bun, Deno, NestJS, and modern frontend bundlers (Vite, Next.js, Nuxt, Astro, SvelteKit):
 
 ```typescript
-// Standard dot notation
+// 1. Node.js & Next.js (dot, brackets, optional chaining)
 const db = process.env.DATABASE_URL;
-
-// Optional chaining
 const apiKey = process.env?.API_KEY;
-
-// Bracket notation
 const secret = process.env['JWT_SECRET'];
 
-// Vite & client-side meta env
+// 2. Vite & modern frontend bundlers (import.meta.env)
 const endpoint = import.meta.env.VITE_BACKEND_URL;
 
-// Destructuring with renaming or default fallbacks
+// 3. Bun runtime
+const bunKey = Bun.env.BUN_SECRET_KEY;
+const { BUN_PORT } = Bun.env;
+
+// 4. Deno runtime
+const denoPort = Deno.env.get("PORT");
+const hasDenoKey = Deno.env.has("API_KEY");
+
+// 5. NestJS & Backend ConfigService
+const dbUrl = this.configService.get<string>('DATABASE_URL');
+const jwt = configService.getOrThrow('JWT_SECRET');
+const redis = config.get('REDIS_HOST');
+
+// 6. Multiline destructuring with defaults and renaming
 const {
   PORT = 3000,
   REDIS_URL,
