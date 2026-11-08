@@ -1,0 +1,6 @@
+test/
+.github/
+.git/
+.gitignore
+.npmignore
+*.log

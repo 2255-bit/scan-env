@@ -1,0 +1,45 @@
+{
+  "name": "scan-env",
+  "version": "1.0.0",
+  "description": "Zero-dependency CLI to detect undeclared environment variables and sync your .env.example",
+  "keywords": [
+    "env",
+    "dotenv",
+    "env-example",
+    "ci",
+    "pre-commit",
+    "audit",
+    "cli",
+    "zero-dependency",
+    "linter"
+  ],
+  "author": "scan-env contributors",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "bin": {
+    "scan-env": "./bin/scan-env.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node ./bin/scan-env.js",
+    "test": "node --test test/**/*.test.js",
+    "lint": "node --check bin/scan-env.js src/*.js test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scan-env/scan-env.git"
+  },
+  "bugs": {
+    "url": "https://github.com/scan-env/scan-env/issues"
+  },
+  "homepage": "https://github.com/scan-env/scan-env#readme"
+}
